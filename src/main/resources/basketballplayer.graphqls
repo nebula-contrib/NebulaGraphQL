@@ -1,0 +1,9 @@
+type Query{
+    players(age : Int) : [Player]
+}
+
+type Player{
+    id : ID
+    name : String
+    age : Int
+}
