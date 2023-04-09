@@ -12,9 +12,10 @@ import java.net.UnknownHostException;
 
 public class AutoGenerateMain {
     public static void main(String[] args) throws UnknownHostException {
-        HostAddress hostAddress = new HostAddress("127.0.0.1",64085);
+        HostAddress hostAddress = new HostAddress("metad0",9559);
+        System.out.println("connect to metad");
         SchemaManger schemaManger = new SchemaManger(Lists.newArrayList(hostAddress));
-        GraphQLSchema graphQLSchema = schemaManger.generateSchema("demo_basketballplayer");
+        GraphQLSchema graphQLSchema = schemaManger.generateSchema("basketballplayer");
         SchemaPrinter schemaPrinter = new SchemaPrinter();
         String printer = schemaPrinter.print(graphQLSchema);
         System.out.println(printer);
