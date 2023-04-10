@@ -10,8 +10,14 @@ import graphql.schema.idl.SchemaPrinter;
 
 import java.net.UnknownHostException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AutoGenerateMain {
+    private static final Logger logger = LoggerFactory.getLogger(AutoGenerateMain.class);
     public static void main(String[] args) throws UnknownHostException {
+        logger.info("Test");
+        InitialUtil.initialBasketballPlayer();
         HostAddress hostAddress = new HostAddress("metad0",9559);
         System.out.println("connect to metad");
         SchemaManger schemaManger = new SchemaManger(Lists.newArrayList(hostAddress));

@@ -1,12 +1,3 @@
-drop space basketballplayer;
-create space basketballplayer(partition_num=10,replica_factor=1,vid_type=fixed_string(32));
-use basketballplayer;
-create tag player(name string,age int);
-create tag team(name string);
-create edge serve(start_year int,end_year int);
-create edge follow(degree int);
-create tag index player_index_0 on player();
-create tag index player_index_1 on player(name(20));
 insert vertex player(name,age) values "player100":("Tim Duncan", 42);
 insert vertex player(name,age) values "player101":("Tony Parker", 36);
 insert vertex player(name,age) values "player102":("LaMarcus Aldridge", 33);

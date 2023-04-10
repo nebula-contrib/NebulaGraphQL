@@ -348,9 +348,10 @@ services:
             fi;
             sleep 1;
             echo "retry to add hosts.";
-          done && nebula-console -addr graphd -port 9669 -u root -p nebula -f /demo/basketballplayer-2.X.ngql && tail /dev/null;
+          done && tail /dev/null;
       depends_on:
         - graphd
+        - metad0
       networks:
         - nebula-net
 

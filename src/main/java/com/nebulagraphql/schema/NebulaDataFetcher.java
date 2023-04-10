@@ -20,16 +20,19 @@ import graphql.schema.GraphQLFieldDefinition;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class NebulaDataFetcher implements DataFetcher<Object> {
+    private static final Logger logger = LoggerFactory.getLogger(NebulaDataFetcher.class);
     @Override
     public Object get(DataFetchingEnvironment environment) throws Exception {
-        System.out.println("in nebula data fetcher");
         GraphQLFieldDefinition fieldDefinition = environment.getFieldDefinition();
         String field = fieldDefinition.getName();
         String tagName = field.substring(0,field.length()-1);
-        DataProcessor dataProcessor = new DataProcessorImpl("demo_basketballplayer",tagName);
+        DataProcessor dataProcessor = new DataProcessorImpl("basketballplayer",tagName);
         Map<String,Object> arguments = environment.getArguments();
-        System.out.println(arguments);
+        logger.debug("arguments:{}",arguments);
         Map<String,String> properties = new HashMap<>();
         for(Map.Entry<String,Object> argument:arguments.entrySet()){
             if(argument.getValue()!=null){
@@ -37,9 +40,9 @@ public class NebulaDataFetcher implements DataFetcher<Object> {
             }
         }
         String statement = new GetVerticesByProperty(tagName,properties).toQuery();
-        System.out.println(statement);
-        List<HostAddress> addresses = Arrays.asList(new HostAddress("127.0.0.1", 9669));
-        String spaceName = "demo_basketballplayer";
+        logger.debug(statement);
+        List<HostAddress> addresses = Arrays.asList(new HostAddress("graphd", 9669));
+        String spaceName = "basketballplayer";
         String user = "root";
         String password = "nebula";
         SessionPoolConfig sessionPoolConfig = new SessionPoolConfig(addresses, spaceName, user, password);
@@ -50,6 +53,9 @@ public class NebulaDataFetcher implements DataFetcher<Object> {
         ResultSet resultSet;
         try {
             resultSet = sessionPool.execute(statement);
+            if(!resultSet.isSucceeded()){
+                logger.error(resultSet.getErrorMessage());
+            }
             List<Vertex> vertices = ResultSetBoot.wrap(resultSet).getVertices();
             List<Map<String,Object>> res = vertices.stream().map(vertex -> vertex.getTags().get(0).getProperties()).collect(Collectors.toList());
             return res;
