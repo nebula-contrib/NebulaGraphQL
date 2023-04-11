@@ -36,7 +36,10 @@ public class NebulaDataFetcher implements DataFetcher<Object> {
         Map<String,String> properties = new HashMap<>();
         for(Map.Entry<String,Object> argument:arguments.entrySet()){
             if(argument.getValue()!=null){
-                properties.put(argument.getKey(),argument.getValue().toString());
+                properties.put(
+                    argument.getKey(),
+                    dataProcessor.process(argument.getKey(), argument.getValue().toString())
+                );
             }
         }
         String statement = new GetVerticesByProperty(tagName,properties).toQuery();

@@ -28,5 +28,7 @@ public class AutoGenerateMain {
         GraphQL build = GraphQL.newGraphQL(graphQLSchema).build();
         ExecutionResult executionResult = build.execute("{players(age:32){name\nage}}");
         System.out.println(executionResult.getData().toString());
+        ExecutionResult executionResult2 = build.execute("{players(name:\"Kobe Bryant\"){name\nage}}");
+        System.out.println(executionResult2.getData().toString());
     }
 }

@@ -6,7 +6,12 @@ import com.vesoft.nebula.PropertyType;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DataProcessorImpl implements DataProcessor{
+    private static final Logger logger = LoggerFactory.getLogger(DataProcessorImpl.class);
+
     private final String space;
 
     private final String tag;
@@ -20,9 +25,11 @@ public class DataProcessorImpl implements DataProcessor{
 
     @Override
     public String process(String field, String value) {
+        logger.debug("processing, key:{}, value:{}",field,value);
         Map<String,PropertyType> lookUp = SchemaManger.getSpaceTagsFieldsMap()
                 .getOrDefault(space,new HashMap<>())
                 .getOrDefault(tag,new HashMap<>());
+        logger.debug("lookUp table: {}",lookUp);
         PropertyType propertyType = lookUp.get(field);
         if(propertyType==null){
             throw new RuntimeException();

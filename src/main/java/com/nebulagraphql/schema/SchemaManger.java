@@ -17,7 +17,12 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SchemaManger {
+    private static final Logger logger = LoggerFactory.getLogger(SchemaManger.class);
+
     private final MetaClient metaClient;
 
     private static final Map<String, Map<String, Map<String, PropertyType>>> spaceTagsFieldsMap = new HashMap<>();
@@ -31,6 +36,7 @@ public class SchemaManger {
     }
 
     public GraphQLSchema generateSchema(String space) {
+        logger.debug("Generating graphql schema from space: {}",space);
         try {
             metaClient.connect();
             List<TagItem> tags = metaClient.getTags(space);
@@ -38,13 +44,14 @@ public class SchemaManger {
             GraphQLCodeRegistry.Builder codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry();
             DataFetcher<Object> propertyDataFetcher = new NebulaDataFetcher();
             queryTypeBuilder.name("Query");
+            Map<String, Map<String, PropertyType>> tagsFieldsMap = new HashMap<>();
             for (TagItem tag : tags) {
                 GraphQLObjectType.Builder tagTypeBuilder = GraphQLObjectType.newObject();
                 String tagName = new String(tag.getTag_name(), StandardCharsets.UTF_8);
+                logger.debug("Generating schema for tag: {}",tagName);
                 tagTypeBuilder.name(tagName);
                 Schema schema = tag.getSchema();
                 List<GraphQLArgument> arguments = new ArrayList<>();
-                Map<String, Map<String, PropertyType>> tagsFieldsMap = new HashMap<>();
                 Map<String, PropertyType> fieldsMap = new HashMap<>();
                 for (ColumnDef columnDef : schema.getColumns()) {
                     GraphQLFieldDefinition.Builder fieldDefinitionBuilder = GraphQLFieldDefinition.newFieldDefinition();
@@ -68,7 +75,6 @@ public class SchemaManger {
                     tagTypeBuilder.field(fieldDefinitionBuilder);
                 }
                 tagsFieldsMap.put(tagName, fieldsMap);
-                spaceTagsFieldsMap.put(space, tagsFieldsMap);
                 GraphQLObjectType tagType = tagTypeBuilder.build();
 
                 //add query for vertices according to properties
@@ -88,13 +94,17 @@ public class SchemaManger {
                                 .build())
                         .build());
                 codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates("Query", tagName + "s"), propertyDataFetcher);
+                logger.debug("Generate tag schema success, tagName: {}",tagName);
             }
+            spaceTagsFieldsMap.put(space, tagsFieldsMap);
+            logger.debug("Generated spaceTagsFieldsMap: {}", spaceTagsFieldsMap);
             GraphQLCodeRegistry codeRegistry = codeRegistryBuilder.build();
             GraphQLObjectType queryType = queryTypeBuilder.build();
             GraphQLSchema graphQLSchema = GraphQLSchema.newSchema()
                     .query(queryType)
                     .codeRegistry(codeRegistry)
                     .build();
+            logger.debug("Generate graphql schema from space success, space name: {}", space);
             return graphQLSchema;
         } catch (ClientServerIncompatibleException e) {
             throw new RuntimeException(e);
