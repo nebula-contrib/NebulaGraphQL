@@ -1,7 +1,8 @@
-package com;
+package com.nebulagraphql;
 
 import com.google.common.collect.Lists;
 import com.nebulagraphql.schema.SchemaManger;
+import com.nebulagraphql.util.InitialUtil;
 import com.vesoft.nebula.client.graph.data.HostAddress;
 import graphql.ExecutionResult;
 import graphql.GraphQL;

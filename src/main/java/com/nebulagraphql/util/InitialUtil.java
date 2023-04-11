@@ -1,4 +1,4 @@
-package com;
+package com.nebulagraphql.util;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
