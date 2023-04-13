@@ -2,6 +2,7 @@ package com.nebulagraphql.schema;
 
 import com.nebulagraphql.util.SchemaUtils;
 import com.vesoft.nebula.PropertyType;
+import com.vesoft.nebula.client.graph.SessionPool;
 import com.vesoft.nebula.client.graph.data.HostAddress;
 import com.vesoft.nebula.client.graph.exception.ClientServerIncompatibleException;
 import com.vesoft.nebula.client.meta.MetaClient;
@@ -35,14 +36,14 @@ public class SchemaManger {
         return spaceTagsFieldsMap;
     }
 
-    public GraphQLSchema generateSchema(String space) {
+    public GraphQLSchema generateSchema(String space,SessionPool sessionPool) {
         logger.debug("Generating graphql schema from space: {}",space);
         try {
             metaClient.connect();
             List<TagItem> tags = metaClient.getTags(space);
             GraphQLObjectType.Builder queryTypeBuilder = GraphQLObjectType.newObject();
             GraphQLCodeRegistry.Builder codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry();
-            DataFetcher<Object> propertyDataFetcher = new NebulaDataFetcher();
+            DataFetcher<Object> propertyDataFetcher = new NebulaDataFetcher(space,sessionPool);
             queryTypeBuilder.name("Query");
             Map<String, Map<String, PropertyType>> tagsFieldsMap = new HashMap<>();
             for (TagItem tag : tags) {
