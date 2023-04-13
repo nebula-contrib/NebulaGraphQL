@@ -6,6 +6,8 @@ import com.nebulagraphql.ngql.GetVerticesByProperty;
 import com.nebulagraphql.rsboot.ResultSetBoot;
 import com.nebulagraphql.rsboot.domain.Vertex;
 import com.nebulagraphql.session.GraphqlSessionPool;
+import com.nebulagraphql.session.MetaData;
+import com.nebulagraphql.util.NgqlUtils;
 import com.vesoft.nebula.client.graph.SessionPool;
 import com.vesoft.nebula.client.graph.SessionPoolConfig;
 import com.vesoft.nebula.client.graph.data.HostAddress;
@@ -29,10 +31,12 @@ public class NebulaDataFetcher implements DataFetcher<Object> {
 
     private String space;
     private final SessionPool sessionPool;
+    private MetaData metaData;
 
-    public NebulaDataFetcher(String space,SessionPool sessionPool){
+    public NebulaDataFetcher(String space,SessionPool sessionPool,MetaData metaData){
         this.space = space;
         this.sessionPool = sessionPool;
+        this.metaData = metaData;
     }
 
     @Override
@@ -43,15 +47,12 @@ public class NebulaDataFetcher implements DataFetcher<Object> {
         DataProcessor dataProcessor = new DataProcessorImpl(space,tagName);
         Map<String,Object> arguments = environment.getArguments();
         logger.debug("arguments:{}",arguments);
-        Map<String,String> properties = new HashMap<>();
-        for(Map.Entry<String,Object> argument:arguments.entrySet()){
-            if(argument.getValue()!=null){
-                properties.put(
-                    argument.getKey(),
-                    dataProcessor.process(argument.getKey(), argument.getValue().toString())
-                );
-            }
-        }
+        Map<String, String> properties = arguments.entrySet().stream()
+        .filter(arg -> arg.getValue() != null)
+        .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                arg -> NgqlUtils.process(metaData, tagName, arg.getKey(), arg.getValue().toString())
+        ));
         String statement = new GetVerticesByProperty(tagName,properties).toQuery();
         logger.debug(statement);
         ResultSet resultSet;
