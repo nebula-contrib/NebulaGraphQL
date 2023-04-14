@@ -1,15 +1,15 @@
 <p align="center">
-  <br> English | <a href="README-CN.md">中文</a>
-  <br>GraphQL Java Library for NebulaGraph Database<br>
+  <br>  <a href="README-CN.md">English</a> | 中文
+  <br>ResultSetBoot for Nebula ResultSet<br>
 </p>
 
 # NebulaGraphQL
 
-## Introduction
+## 介绍
 
-NebulaGraphQL aims to support GraphQL query for NebulaGraph Database.
+NebulaGraphQL目标是为NebulaGraph支持GraphQL查询
 
-## Install
+## 安装
 
 ```
 <repositories>
@@ -27,7 +27,7 @@ NebulaGraphQL aims to support GraphQL query for NebulaGraph Database.
 </dependency>
 ```
 
-## Usage
+## 使用
 ```
 HostAddress metadAddress = new HostAddress("metad0",9559);
 HostAddress graphdAddress = new HostAddress("graphd", 9669);
@@ -43,7 +43,7 @@ GraphqlSessionPool pool = new GraphqlSessionPool(graphqlSessionPoolConfig);
 ExecutionResult executionResult = pool.execute("{players(age:32){name\nage}}");
 ```
 
-## How to contribute
+## 参与贡献
 # quick-start
 ```
 docker-compose -f docker-compose.dev.yml up --build
