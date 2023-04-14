@@ -1,5 +1,6 @@
 package com.nebulagraphql.schema;
 
+import com.nebulagraphql.session.MetaData;
 import com.nebulagraphql.util.SchemaUtils;
 import com.vesoft.nebula.PropertyType;
 import com.vesoft.nebula.client.graph.SessionPool;
@@ -26,24 +27,18 @@ public class SchemaManger {
 
     private final MetaClient metaClient;
 
-    private static final Map<String, Map<String, Map<String, PropertyType>>> spaceTagsFieldsMap = new HashMap<>();
-
     public SchemaManger(List<HostAddress> addresses) throws UnknownHostException {
         this.metaClient = new MetaClient(addresses,30000,3,3);
     }
 
-    public static Map<String, Map<String, Map<String, PropertyType>>> getSpaceTagsFieldsMap() {
-        return spaceTagsFieldsMap;
-    }
-
-    public GraphQLSchema generateSchema(String space,SessionPool sessionPool) {
+    public GraphQLSchema generateSchema(String space,SessionPool sessionPool,MetaData metaData) {
         logger.debug("Generating graphql schema from space: {}",space);
         try {
             metaClient.connect();
             List<TagItem> tags = metaClient.getTags(space);
             GraphQLObjectType.Builder queryTypeBuilder = GraphQLObjectType.newObject();
             GraphQLCodeRegistry.Builder codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry();
-            DataFetcher<Object> propertyDataFetcher = new NebulaDataFetcher(space,sessionPool);
+            DataFetcher<Object> propertyDataFetcher = new NebulaDataFetcher(sessionPool,metaData);
             queryTypeBuilder.name("Query");
             Map<String, Map<String, PropertyType>> tagsFieldsMap = new HashMap<>();
             for (TagItem tag : tags) {
@@ -97,8 +92,6 @@ public class SchemaManger {
                 codeRegistryBuilder.dataFetcher(FieldCoordinates.coordinates("Query", tagName + "s"), propertyDataFetcher);
                 logger.debug("Generate tag schema success, tagName: {}",tagName);
             }
-            spaceTagsFieldsMap.put(space, tagsFieldsMap);
-            logger.debug("Generated spaceTagsFieldsMap: {}", spaceTagsFieldsMap);
             GraphQLCodeRegistry codeRegistry = codeRegistryBuilder.build();
             GraphQLObjectType queryType = queryTypeBuilder.build();
             GraphQLSchema graphQLSchema = GraphQLSchema.newSchema()

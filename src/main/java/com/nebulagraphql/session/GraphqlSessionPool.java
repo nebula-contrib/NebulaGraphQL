@@ -20,6 +20,7 @@ import com.vesoft.nebula.meta.ColumnDef;
 import com.vesoft.nebula.meta.Schema;
 import com.vesoft.nebula.meta.TagItem;
 
+import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 
@@ -32,29 +33,38 @@ public class GraphqlSessionPool {
     private final GraphQL build;
     private final GraphQLSchema graphQLSchema;
 
-    private final MetaData metaData;
+    private MetaData metaData;
 
     public GraphqlSessionPool(GraphqlSessionPoolConfig config) throws UnknownHostException{
-        this.metaData = getMetaData(config.getMetadAddress(), config.getSpaceName(), config.getTimeout(), 3, 3);
-        
+        getMetaData(config.getMetadAddress(), config.getSpaceName(), config.getTimeout(), 3, 3);
         sessionPool = new SessionPool(config.getSessionPoolConfig());
+        sessionPool.init();
         SchemaManger schemaManger = new SchemaManger(config.getMetadAddress());
-        graphQLSchema = schemaManger.generateSchema(config.getSpaceName(),sessionPool);
+        graphQLSchema = schemaManger.generateSchema(config.getSpaceName(),sessionPool,metaData);
         build = GraphQL.newGraphQL(graphQLSchema).build();
     }
 
-    private MetaData getMetaData(List<HostAddress> addresses,String spaceName,int timeout,int connectionRetry,int executionRetry) throws UnknownHostException{
+    public ExecutionResult execute(String statement){
+        return build.execute(statement);
+    }
+
+    public void close(){
+        sessionPool.close();
+    }
+
+    private void getMetaData(List<HostAddress> addresses,String spaceName,int timeout,int connectionRetry,int executionRetry) throws UnknownHostException{
         MetaClient client = new MetaClient(addresses,timeout,connectionRetry,executionRetry);
         try {
             client.connect();
             List<TagItem> tags = client.getTags(spaceName);
             Map<String,Map<String,PropertyType>> tagsFileds = getTagsFields(tags);
-            return new MetaData(tagsFileds);
+            this.metaData = new MetaData(tagsFileds);
         } catch (TException | ClientServerIncompatibleException | ExecuteFailedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }finally{
+            client.close();
         }
-        
     }
 
     private String decodeString(byte[] bytes) {

@@ -2,6 +2,8 @@ package com.nebulagraphql;
 
 import com.google.common.collect.Lists;
 import com.nebulagraphql.schema.SchemaManger;
+import com.nebulagraphql.session.GraphqlSessionPool;
+import com.nebulagraphql.session.GraphqlSessionPoolConfig;
 import com.nebulagraphql.util.InitialUtil;
 import com.vesoft.nebula.client.graph.data.HostAddress;
 import graphql.ExecutionResult;
@@ -19,17 +21,20 @@ public class AutoGenerateMain {
     public static void main(String[] args) throws UnknownHostException {
         logger.info("Test");
         InitialUtil.initialBasketballPlayer();
-        HostAddress hostAddress = new HostAddress("metad0",9559);
-        System.out.println("connect to metad");
-        SchemaManger schemaManger = new SchemaManger(Lists.newArrayList(hostAddress));
-        GraphQLSchema graphQLSchema = schemaManger.generateSchema("basketballplayer");
-        SchemaPrinter schemaPrinter = new SchemaPrinter();
-        String printer = schemaPrinter.print(graphQLSchema);
-        System.out.println(printer);
-        GraphQL build = GraphQL.newGraphQL(graphQLSchema).build();
-        ExecutionResult executionResult = build.execute("{players(age:32){name\nage}}");
+        HostAddress metadAddress = new HostAddress("metad0",9559);
+        HostAddress graphdAddress = new HostAddress("graphd", 9669);
+        String spaceName = "basketballplayer";
+        String username = "root";
+        String password = "nebula";
+        GraphqlSessionPoolConfig graphqlSessionPoolConfig = new GraphqlSessionPoolConfig(
+            Lists.newArrayList(graphdAddress), 
+            Lists.newArrayList(metadAddress), 
+            spaceName, username, password);
+        graphqlSessionPoolConfig.setTimeout(3000);
+        GraphqlSessionPool pool = new GraphqlSessionPool(graphqlSessionPoolConfig);
+        ExecutionResult executionResult = pool.execute("{players(age:32){name\nage}}");
         System.out.println(executionResult.getData().toString());
-        ExecutionResult executionResult2 = build.execute("{players(name:\"Kobe Bryant\"){name\nage}}");
+        ExecutionResult executionResult2 = pool.execute("{players(name:\"Kobe Bryant\"){name\nage}}");
         System.out.println(executionResult2.getData().toString());
     }
 }

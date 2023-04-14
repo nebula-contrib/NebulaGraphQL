@@ -1,7 +1,5 @@
 package com.nebulagraphql.schema;
 
-import com.nebulagraphql.ngql.DataProcessor;
-import com.nebulagraphql.ngql.DataProcessorImpl;
 import com.nebulagraphql.ngql.GetVerticesByProperty;
 import com.nebulagraphql.rsboot.ResultSetBoot;
 import com.nebulagraphql.rsboot.domain.Vertex;
@@ -29,12 +27,10 @@ import org.slf4j.LoggerFactory;
 public class NebulaDataFetcher implements DataFetcher<Object> {
     private static final Logger logger = LoggerFactory.getLogger(NebulaDataFetcher.class);
 
-    private String space;
     private final SessionPool sessionPool;
     private MetaData metaData;
 
-    public NebulaDataFetcher(String space,SessionPool sessionPool,MetaData metaData){
-        this.space = space;
+    public NebulaDataFetcher(SessionPool sessionPool,MetaData metaData){
         this.sessionPool = sessionPool;
         this.metaData = metaData;
     }
@@ -44,7 +40,6 @@ public class NebulaDataFetcher implements DataFetcher<Object> {
         GraphQLFieldDefinition fieldDefinition = environment.getFieldDefinition();
         String field = fieldDefinition.getName();
         String tagName = field.substring(0,field.length()-1);
-        DataProcessor dataProcessor = new DataProcessorImpl(space,tagName);
         Map<String,Object> arguments = environment.getArguments();
         logger.debug("arguments:{}",arguments);
         Map<String, String> properties = arguments.entrySet().stream()
@@ -67,8 +62,6 @@ public class NebulaDataFetcher implements DataFetcher<Object> {
         } catch (IOErrorException | ClientServerIncompatibleException | AuthFailedException | BindSpaceFailedException e) {
             e.printStackTrace();
             System.exit(1);
-        } finally {
-            sessionPool.close();
         }
         return null;
     }
