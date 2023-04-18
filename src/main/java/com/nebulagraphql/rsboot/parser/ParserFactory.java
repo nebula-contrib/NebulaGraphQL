@@ -31,7 +31,7 @@ public class ParserFactory {
         return parser;
     }
 
-    public static<T extends Parser> void registerParser(ValueWrapperType valueWrapperType, Class<T> clazz) {
+    public static <T extends Parser> void registerParser(ValueWrapperType valueWrapperType, Class<T> clazz) {
         PARSER_MAP.put(valueWrapperType.getValue(), clazz);
     }
 

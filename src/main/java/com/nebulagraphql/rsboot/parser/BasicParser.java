@@ -17,9 +17,9 @@ public class BasicParser extends BaseParser {
     }
 
     @Override
-    public Object parse(){
+    public Object parse() {
         Object v = null;
-        try{
+        try {
             if (valueWrapper.isString()) {
                 v = valueWrapper.asString();
             } else if (valueWrapper.isLong()) {
@@ -36,7 +36,7 @@ public class BasicParser extends BaseParser {
                 v = valueWrapper.asDateTime();
             } else if (valueWrapper.isGeography()) {
                 v = valueWrapper.asGeography().toString();
-            } else if (valueWrapper.isDuration()){
+            } else if (valueWrapper.isDuration()) {
                 v = valueWrapper.asDuration().toString();
             } else if (valueWrapper.isSet()) {
                 v = defaultSetParser(valueWrapper);
@@ -51,7 +51,7 @@ public class BasicParser extends BaseParser {
             } else if (valueWrapper.isPath()) {
                 v = defaultPathPaser(valueWrapper);
             }
-        }catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             throw new ParserException(e);
         }
         return v;

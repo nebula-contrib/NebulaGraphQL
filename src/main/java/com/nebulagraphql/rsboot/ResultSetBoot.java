@@ -46,9 +46,9 @@ public class ResultSetBoot {
     public List<Vertex> getVertices() {
         List<String> columNames = resultSet.getColumnNames();
         List<Vertex> vertices = new ArrayList<>();
-        for(String columName:columNames){
-            for(ValueWrapper valueWrapper: resultSet.colValues(columName)){
-                if(valueWrapper.isVertex()){
+        for (String columName : columNames) {
+            for (ValueWrapper valueWrapper : resultSet.colValues(columName)) {
+                if (valueWrapper.isVertex()) {
                     Vertex vertex = (Vertex) ParserFactory.getParser(valueWrapper).parse();
                     vertices.add(vertex);
                 }
@@ -57,7 +57,7 @@ public class ResultSetBoot {
         return vertices;
     }
 
-    public Object toJson(){
+    public Object toJson() {
         if (!resultSet.isSucceeded()) {
             JSONObject failure = new JSONObject();
             failure.put("error_code", resultSet.getErrorCode());

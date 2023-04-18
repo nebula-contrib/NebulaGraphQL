@@ -1,6 +1,6 @@
 package com.nebulagraphql.rsboot.parser;
 
-public class ParserException extends RuntimeException{
+public class ParserException extends RuntimeException {
     public ParserException() {
         super();
     }

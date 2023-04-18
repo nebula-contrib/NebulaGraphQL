@@ -2,32 +2,31 @@ package com.nebulagraphql.session;
 
 import com.vesoft.nebula.client.graph.SessionPoolConfig;
 import com.vesoft.nebula.client.graph.data.HostAddress;
+
 import java.util.List;
 
-public class GraphqlSessionPoolConfig{
+public class GraphqlSessionPoolConfig {
     private SessionPoolConfig sessionPoolConfig;
     private List<HostAddress> metadAddress;
 
     public GraphqlSessionPoolConfig(
-        List<HostAddress> graphdAddresses,
-        List<HostAddress> metadAddresses,
-        String spaceName,
-        String username,
-        String password
-    ){
-        if(metadAddresses == null || metadAddresses.size()==0){
+            List<HostAddress> graphdAddresses,
+            List<HostAddress> metadAddresses,
+            String spaceName,
+            String username,
+            String password
+    ) {
+        if (metadAddresses == null || metadAddresses.size() == 0) {
             throw new IllegalArgumentException("Metad addresses cannot be empty.");
         }
         this.sessionPoolConfig = new SessionPoolConfig(graphdAddresses, spaceName, username, password);
         this.metadAddress = metadAddresses;
     }
 
-    
 
     public SessionPoolConfig getSessionPoolConfig() {
         return sessionPoolConfig;
     }
-
 
 
     public void setSessionPoolConfig(SessionPoolConfig sessionPoolConfig) {
@@ -35,17 +34,14 @@ public class GraphqlSessionPoolConfig{
     }
 
 
-
     public List<HostAddress> getMetadAddress() {
         return metadAddress;
     }
 
 
-
     public void setMetadAddress(List<HostAddress> metadAddress) {
         this.metadAddress = metadAddress;
     }
-
 
 
     public String getUsername() {
@@ -68,7 +64,7 @@ public class GraphqlSessionPoolConfig{
         return sessionPoolConfig.getMinSessionSize();
     }
 
-    public GraphqlSessionPoolConfig setMinSessionSize(int minSessionSize){
+    public GraphqlSessionPoolConfig setMinSessionSize(int minSessionSize) {
         sessionPoolConfig.setMinSessionSize(minSessionSize);
         return this;
     }
@@ -77,7 +73,7 @@ public class GraphqlSessionPoolConfig{
         return sessionPoolConfig.getMaxSessionSize();
     }
 
-    public GraphqlSessionPoolConfig setMaxSessionSize(int maxSessionSize){
+    public GraphqlSessionPoolConfig setMaxSessionSize(int maxSessionSize) {
         sessionPoolConfig.setMaxSessionSize(maxSessionSize);
         return this;
     }
@@ -86,40 +82,40 @@ public class GraphqlSessionPoolConfig{
         return sessionPoolConfig.getTimeout();
     }
 
-    public GraphqlSessionPoolConfig setTimeout(int timeout){
+    public GraphqlSessionPoolConfig setTimeout(int timeout) {
         sessionPoolConfig.setTimeout(timeout);
         return this;
     }
 
-    public int getCleanTime(){
+    public int getCleanTime() {
         return sessionPoolConfig.getCleanTime();
     }
 
-    public GraphqlSessionPoolConfig setCleanTime(int cleanTime){
+    public GraphqlSessionPoolConfig setCleanTime(int cleanTime) {
         sessionPoolConfig.setCleanTime(cleanTime);
         return this;
     }
 
-    public int getHealthCheckTime(){
+    public int getHealthCheckTime() {
         return sessionPoolConfig.getHealthCheckTime();
     }
 
-    public GraphqlSessionPoolConfig setHealthCheckTime(int healthCheckTime){
+    public GraphqlSessionPoolConfig setHealthCheckTime(int healthCheckTime) {
         sessionPoolConfig.setHealthCheckTime(healthCheckTime);
         return this;
     }
 
-    public int getWaitTime(){
+    public int getWaitTime() {
         return sessionPoolConfig.getWaitTime();
     }
 
-    public GraphqlSessionPoolConfig setWaitTime(int waitTime){
+    public GraphqlSessionPoolConfig setWaitTime(int waitTime) {
         sessionPoolConfig.setWaitTime(waitTime);
         return this;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "GraphqlSessionPoolConfig{"
                 + "username='" + sessionPoolConfig.getUsername() + '\''
                 + ", graphAddressList=" + sessionPoolConfig.getGraphAddressList()

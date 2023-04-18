@@ -1,6 +1,6 @@
 <p align="center">
   <br>  <a href="README-CN.md">English</a> | 中文
-  <br>ResultSetBoot for Nebula ResultSet<br>
+  <br>GraphQL Java Library for NebulaGraph<br>
 </p>
 
 # NebulaGraphQL
@@ -19,6 +19,7 @@ NebulaGraphQL目标是为NebulaGraph支持GraphQL查询
     </repository>
 </repositories>
 ```
+
 ```
 <dependency>
   <groupId>com.dragonchu</groupId>
@@ -28,6 +29,7 @@ NebulaGraphQL目标是为NebulaGraph支持GraphQL查询
 ```
 
 ## 使用
+
 ```
 HostAddress metadAddress = new HostAddress("metad0",9559);
 HostAddress graphdAddress = new HostAddress("graphd", 9669);
@@ -44,7 +46,9 @@ ExecutionResult executionResult = pool.execute("{players(age:32){name\nage}}");
 ```
 
 ## 参与贡献
+
 # quick-start
+
 ```
 docker-compose -f docker-compose.dev.yml up --build
 ```

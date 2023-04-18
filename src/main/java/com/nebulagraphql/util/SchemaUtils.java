@@ -4,8 +4,6 @@ import com.vesoft.nebula.PropertyType;
 import graphql.Scalars;
 import graphql.schema.GraphQLScalarType;
 
-import java.util.UnknownFormatConversionException;
-
 public class SchemaUtils {
     public static GraphQLScalarType getType(PropertyType propertyType) {
         switch (propertyType) {

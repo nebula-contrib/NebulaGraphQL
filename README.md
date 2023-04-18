@@ -1,6 +1,6 @@
 <p align="center">
   <br> English | <a href="README-CN.md">中文</a>
-  <br>GraphQL Java Library for NebulaGraph Database<br>
+  <br>GraphQL Java Library for NebulaGraph<br>
 </p>
 
 # NebulaGraphQL
@@ -19,6 +19,7 @@ NebulaGraphQL aims to support GraphQL query for NebulaGraph Database.
     </repository>
 </repositories>
 ```
+
 ```
 <dependency>
   <groupId>com.dragonchu</groupId>
@@ -28,6 +29,7 @@ NebulaGraphQL aims to support GraphQL query for NebulaGraph Database.
 ```
 
 ## Usage
+
 ```
 HostAddress metadAddress = new HostAddress("metad0",9559);
 HostAddress graphdAddress = new HostAddress("graphd", 9669);
@@ -44,7 +46,9 @@ ExecutionResult executionResult = pool.execute("{players(age:32){name\nage}}");
 ```
 
 ## How to contribute
+
 # quick-start
+
 ```
 docker-compose -f docker-compose.dev.yml up --build
 ```
