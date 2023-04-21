@@ -47,7 +47,8 @@ public class GraphqlSessionPool {
         sessionPool.close();
     }
 
-    private void getMetaData(List<HostAddress> addresses, String spaceName, int timeout, int connectionRetry, int executionRetry) throws UnknownHostException {
+    private void getMetaData(List<HostAddress> addresses, String spaceName, int timeout, int connectionRetry,
+            int executionRetry) throws UnknownHostException {
         MetaClient client = new MetaClient(addresses, timeout, connectionRetry, executionRetry);
         try {
             client.connect();
@@ -69,15 +70,13 @@ public class GraphqlSessionPool {
     private Map<String, PropertyType> getColumnMap(Schema schema) {
         return schema.getColumns().stream().collect(Collectors.toMap(
                 column -> decodeString(column.getName()),
-                column -> column.type.getType()
-        ));
+                column -> column.type.getType()));
     }
 
     private Map<String, Map<String, PropertyType>> getTagsFields(List<TagItem> tags) {
         return tags.stream().collect(Collectors.toMap(
                 tag -> decodeString(tag.getTag_name()),
-                tag -> getColumnMap(tag.getSchema())
-        ));
+                tag -> getColumnMap(tag.getSchema())));
     }
 
 }
