@@ -13,6 +13,8 @@ import com.vesoft.nebula.meta.TagItem;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
+import graphql.schema.idl.SchemaPrinter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,8 @@ public class GraphqlSessionPool {
         sessionPool.init();
         SchemaManger schemaManger = new SchemaManger(config.getMetadAddress());
         graphQLSchema = schemaManger.generateSchema(config.getSpaceName(), sessionPool, metaData);
+        //print schema
+        logger.debug("Generated graphql schema: {}", new SchemaPrinter().print(graphQLSchema));
         build = GraphQL.newGraphQL(graphQLSchema).build();
     }
 
